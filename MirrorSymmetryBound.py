@@ -22,13 +22,6 @@ def sample_a_Bloch_Vector():
     r = np.random.uniform(0, 1) ** (1/2)   
     return vec * r
 
-def OverallBound(w12,w13,w23):
-    """ See Eq. (27) in the manuscript """
-    A12 = 2.0*np.sqrt(w12**2+(1.0-w12)**2) + w12
-    A13 = 2.0*np.sqrt(w13**2+(1.0-w13)**2) + w13
-    A23 = 2.0*np.sqrt(w23**2+(1.0-w23)**2) + w23
-    return A12 + A13 + A23
-
 w12 = weight_function(alpha12)
 w13 = weight_function(alpha13)
 w23 = weight_function(alpha23)
