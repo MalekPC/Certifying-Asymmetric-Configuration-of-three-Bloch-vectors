@@ -1,1 +1,2 @@
-# Certifying-Asymmetric-Configuration-of-three-Bloch-vectors
+# Certifying Asymmetry in the configuration of three qubits
+
