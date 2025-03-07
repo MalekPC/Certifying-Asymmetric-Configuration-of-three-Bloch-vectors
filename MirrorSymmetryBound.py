@@ -115,7 +115,7 @@ constraints3 = [
 ]
 
 # In order to be sure that the obained solution corresponds to a global maximum, 
-# we solve the problem for serveral random initial guesses and take the maximum value 
+# we solve the problem for several random initial guesses and take the maximum value 
 # of all solutions (the obtained bound maches the same bound obtained using a Convex relaxation 
 # of the objective function.) 
 
