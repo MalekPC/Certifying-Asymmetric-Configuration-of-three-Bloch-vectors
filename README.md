@@ -1,2 +1,2 @@
-# Certifying Asymmetry in the configuration of three qubits
+# Certifying asymmetry in the configuration of three qubits
 
