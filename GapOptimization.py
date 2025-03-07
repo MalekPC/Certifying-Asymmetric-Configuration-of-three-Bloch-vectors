@@ -1,10 +1,10 @@
 import numpy as np
-from numpy import pi, cos, sin 
+from numpy import pi, cos, sin,arccos
 from scipy.optimize import minimize
 
 ''' This script aims to find to asymmetric configuration of three Bloch vectors characterized by the largest
 gap between the overall bound in Eq.(27) and the mirror symmetric bound Qmirror. To do this, we optimize the 
-gap fuction above over the angles alpha12, alpha12 and alpha23 or equivalently over the weight w12, w13 and w23''' 
+gap fuction above over the angles alpha12, alpha12 and alpha23 or equivalently over the weight w12, w13 and w23'''
 
 
 Degree= pi/180
@@ -16,7 +16,7 @@ def weight_function(alpha):
 def sample_a_Bloch_Vector():
     vec = np.random.normal(0, 1, 3)       # Sample from normal distribution
     vec /= np.linalg.norm(vec)            # Normalize to unit sphere
-    r = np.random.uniform(0, 1) ** (1/2)   
+    r = np.random.uniform(0, 1) ** (1/2)
     return vec * r
 
 def OverallBound(alpha12, alpha13, alpha23):
@@ -53,21 +53,21 @@ def Q(w12,w13,w23,x):
     m4= np.array([xm4,ym4,zm4])
     m5= np.array([xm5,ym5,zm5])
     m6= np.array([xm6,ym6,zm6])
-  
+
     return  w12 + w13 + w23 \
         +w12*(n1+n2)@m1 + (1-w12)*(n1-n2)@m2 \
         +w13*(n1+n3)@m3 + (1-w13)*(n1-n3)@m4 \
-        +w23*(n2+n3)@m5 + (1-w23)*(n2-n3)@m6 
+        +w23*(n2+n3)@m5 + (1-w23)*(n2-n3)@m6
 
 
 # constraints: 
-def Mirror123Constraint(x): 
+def Mirror123Constraint(x):
     return (x[0]-x[3])**2 + (x[1]-x[4])**2 + (x[2]-x[5])**2 -((x[0]-x[6])**2+(x[1]-x[7])**2+(x[2]-x[8])**2)
 
-def Mirror213Constraint(x): 
+def Mirror213Constraint(x):
     return (x[3]-x[0])**2 + (x[4]-x[1])**2 + (x[5]-x[2])**2 -((x[3]-x[6])**2+(x[4]-x[7])**2+(x[5]-x[8])**2)
 
-def Mirror312Constraint(x): 
+def Mirror312Constraint(x):
     return (x[6]-x[0])**2 + (x[7]-x[1])**2 + (x[8]-x[2])**2 -((x[6]-x[3])**2+(x[7]-x[4])**2+(x[8]-x[5])**2)
 
 constraints1 = [
@@ -142,40 +142,62 @@ def MirrorBound(alpha12, alpha13, alpha23):
          result2 = minimize(objective, initial_guess, method='SLSQP', constraints=constraints2, tol=1e-10)
          result3 = minimize(objective, initial_guess, method='SLSQP', constraints=constraints3, tol=1e-10)
 
-         result = min(result1.fun,result2.fun,result3.fun) 
-   
-       
+         result = min(result1.fun,result2.fun,result3.fun)
+
+
          if  result < best_cost:
-             best_cost = result 
+             best_cost = result
              best_result = result
              #OptimalResults=[result1,result2,result3]
 
-         Qmirror = round(-best_result,8)
+         Qmirror = -best_result
          return Qmirror
 
 #print(MirrorBound(58.4*Degree, 121.6*Degree, 180*Degree))
 
 
 
-def gap_witness(alpha12,alpha13, alpha23):
-   return OverallBound(alpha12, alpha13, alpha23)-MirrorBound(alpha12, alpha13, alpha23)
+def gap_witness(alpha12,alpha13,phi3):
+    '''We used the following parametrization to define the relative angles between the three pair
+      of Bloch vectors (i.e. (12), (13) and (23)):
+      n1=(0,0,1)
+      n2=(sin(theta2), 0,cos(theta2)))
+      n3=(sin(theta3)*cos(phi3), sin(theta3)*sin(phi3), cos(theta3))
+      Thus we have:
+      alpha12=theta2
+      alpha13=theta3
+      '''
+    alpha23=arccos(np.sin(alpha12)*np.sin(alpha13)*np.cos(phi3)+np.cos(alpha12)*np.cos(alpha13))
+    return OverallBound(alpha12, alpha13, alpha23)-MirrorBound(alpha12, alpha13, alpha23)
 
 def objectivegap(x):
-    alpha12, alpha13, alpha23=x
-    return -gap_witness(alpha12, alpha13, alpha23)
+    alpha12, alpha13, alpha23 =x
+    return -gap_witness(alpha12, alpha13,alpha23)
 
-num_initial_guesses = 5
+num_initial_guesses = 10
 best_cost = np.inf
 best_result = None
 
 for _ in range(num_initial_guesses):
 
     # Initial guess
-    x0 =2*pi*np.random.rand(3)
+    x0  = pi*np.random.rand(2)
+    x0=np.append(x0,2*pi*np.random.rand())
     # Solve using Squential Least Squares Quadratic Programming  
-    result = minimize(objectivegap, x0, method='COBYLA', tol=1e-12)
+    result = minimize(objectivegap, x0, method='nelder-mead',bounds=[(0.0,pi),(0.0,pi),(0,2*pi)],tol=1e-12)
 
 
-    if  result < best_cost:
-        best_cost = result
+    if  result.fun < best_cost:
+        best_cost = result.fun
         best_result = result
+
+print(-best_result.fun)
+alpha12=best_result.x[0]
+alpha13=best_result.x[1]
+phi3=best_result.x[2]
+print(alpha12/Degree, alpha13/Degree,(arccos(np.sin(alpha12)*np.sin(alpha13)*np.cos(phi3)+np.cos(alpha12)*np.cos(alpha13)))/Degree )
+
+
+#print("Largest gap between the optimal global witness Q_max and the optimal mirror-symmetry witness ", Gmax)
+#print("{.f10}",store)
+                                                  
