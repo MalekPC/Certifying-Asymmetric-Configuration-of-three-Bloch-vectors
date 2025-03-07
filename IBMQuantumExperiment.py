@@ -185,7 +185,7 @@ from qiskit_ibm_runtime import QiskitRuntimeService
 from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
 
 # Choosing the service 
-token="5f8147c1341fb5f8cc0957e4ea0ee6238d49978826b607f9da0fb3167fc338b9bcca0fd865ee2f410b76f70aa12fc1cac0a7841afd69538aecb1dc5b6c3b7f9c"
+token="place your token here"
 service = QiskitRuntimeService(channel="ibm_quantum", token=token) 
 
 # Choosing the IBMQ backend
