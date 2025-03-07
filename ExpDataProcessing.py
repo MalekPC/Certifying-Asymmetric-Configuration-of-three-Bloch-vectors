@@ -105,7 +105,7 @@ delta13=sqrt(Var13)
 
 print(I_13)
 
-# Calculating witness I3(\omgea_{12})
+# Calculating witness I3(\omgea_{23})
 
 Exy =  np.array([[E[12], E[13]],
                  [E[14], E[15]],
