@@ -13,6 +13,21 @@ alpha12 = 58.4*Degree
 alpha13 = 121.6*Degree 
 alpha23 = 180*Degree
 
+# Saving the target's angles to an external file named ExperimentINPUT.txt
+file_name ="ExperimentINPUT.txt"
+with open(file_name, "w") as file:
+     file.write(alpha12) 
+     file.write(alpha13) 
+     file.write(alpha23) 
+
+# Choosing the IBMQ backend
+backend_name = "ibm_brisbane"
+
+# Number of shots in the experiment
+shots=4096
+with open(file_name, "w") as file:
+    file.write(shots)
+    
 #============================ Functions ===================================== 
 ''' Here we define some useful fucntions which will be used later on to build 
 the quantum circuits intented to certify our target triple of qubit states.'''
@@ -111,7 +126,7 @@ def build_circuit(prepared_Bloch_vector, measurement_Bloch_vector,meas_label):
 #== Preparation Bloch vectors (target + auxilary Bloch vectors)
 
 # Target
-n1=np.array([0,0,1.0])
+n1=np.array([0,0,1])
 n2=RY(n1,alpha12)
 n3=RY(n2,alpha23)
 
@@ -188,9 +203,6 @@ from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
 token="place your token here"
 service = QiskitRuntimeService(channel="ibm_quantum", token=token) 
 
-# Choosing the IBMQ backend
-backend_name = "ibm_brisbane"
-
 backend = service.backend(backend_name)
 
 # Transpiling the quantum circuits
@@ -203,7 +215,7 @@ from  qiskit_ibm_runtime import SamplerOptions
 
 
 sampler = Sampler(backend)
-sampler.options.default_shots = 4096
+sampler.options.default_shots = shots
 
 
 ## run the circuits
@@ -212,5 +224,5 @@ job = sampler.run(circuits_transpiled)
 job_id = job.job_id()
 print("Job ID :", job_id)
 
-with open("JobID.txt", "w") as file:
+with open(file_name, "w") as file:
     file.write(job_id) 
