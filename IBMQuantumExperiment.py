@@ -7,11 +7,10 @@ from scipy.linalg import norm
 Degree= pi/180.0
 
 #====== Target triple of qubit states================ 
-#(Chosen here to be represented on the real plane XZ) 
-
-alpha12 = 58.4*Degree
-alpha13 = 121.6*Degree 
-alpha23 = 180*Degree
+# The angles between each pair of the associated three Bloch vectors must be given: 
+alpha12 = 58.4*Degree    #  cos(alpha12) = \vec{n}_1 \dot  \vec{n}_2
+alpha13 = 121.6*Degree   #  cos(alpha13) = \vec{n}_1 \dot  \vec{n}_3
+alpha23 = 180*Degree     #  cos(alpha23) = \vec{n}_2 \dot  \vec{n}_3
 
 # Saving the target's angles to an external file named ExperimentINPUT.txt
 file_name ="ExperimentINPUT.txt"
