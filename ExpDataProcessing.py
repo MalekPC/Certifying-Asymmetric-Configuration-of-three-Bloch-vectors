@@ -5,30 +5,33 @@ import numpy as  np
 
 Degree= pi/180
 
-alpha12 = 58.4*Degree
-alpha13 = 121.6*Degree
-alpha23 = 180*Degree
+
+#====> Reading 
+with open("JobID.txt", "r") as file:
+    job_id=file.read()
+    
+
+job = service.job(job_id.strip())
+
+# Number of shots
+shots=4096
+
+# The angles defining the target must be given: 
+alpha12 = 58.4*Degree    #  cos(alpha12) = \vec{n}_1 \dot  \vec{n}_2
+alpha13 = 121.6*Degree   #  cos(alpha13) = \vec{n}_1 \dot  \vec{n}_3
+alpha23 = 180*Degree     #  cos(alpha23) = \vec{n}_2 \dot  \vec{n}_3
+
 
 def weight_function(alpha):
     ''' Calculating the bias parameter \( omega\) from the relative angle between
     the target pair of Bloch vectors \( \cos(\alpha) = \vec{n}_i \dot \vec{n}_j  \)'''
     return 0.5*(1.0 + (1.0 - abs(sin(alpha)))*(1./cos(alpha)))
 
+
 service = QiskitRuntimeService()
 
-
-with open("JobID.txt", "r") as file:
-    job_id=file.read()
-
-
-job = service.job(job_id.strip())
-
-
-shots=4096
-
-result = job.result()
-
 #  Retrieving counts
+result = job.result()
 counts=[]
 num_of_circuits = 3*2*3 
 for  i in range(num_of_circuits):
